@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "@types/node": "^18.16.1",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "@typegoose/typegoose": "^11.0.2",
+    "mongoose": "^7.0.5"
+  }
+}
