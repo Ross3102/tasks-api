@@ -25,6 +25,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/categories', routes.categories);
+app.use('/tasks', routes.tasks);
 
 app.listen(port, () =>
   console.log(`Listening on port ${port}`)

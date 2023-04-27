@@ -6,7 +6,12 @@ import { currentUser } from "../util/auth";
 const router = Router();
 
 router.get('/', async (req, res) => {
-  const user = await UserModel.findById(currentUser()).populate('categories');
+  const user = await UserModel.findById(currentUser()).populate({
+    path: 'categories',
+    populate: {
+      path: 'tasks',
+    }
+  });
   if (!user) {
     return res.sendStatus(404);
   }
@@ -15,21 +20,25 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:category_id', async (req, res) => {
-  const category = await CategoryModel.findById(req.params.category_id);
+  const category = await CategoryModel.findById(req.params.category_id).populate('tasks');
   if (!category) {
     return res.sendStatus(404);
   }
   return res.send(category);
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
+  const user = await UserModel.findById(currentUser());
+  if (!user) {
+    return res.sendStatus(401);
+  }
   CategoryModel.create({
     ...req.body,
     owner: currentUser()
   })
     .then(async (category) => {
-      const user = await UserModel.findById(currentUser());
-      user?.categories.push(category);
+      user.categories.push(category);
+      user.save();
       res.status(201).send(category)
     })
     .catch((err) => res.sendStatus(400));
